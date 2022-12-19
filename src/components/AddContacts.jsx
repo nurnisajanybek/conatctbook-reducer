@@ -18,7 +18,16 @@ const AddContacts = () => {
   }
 
   function handleClick() {
+    if (
+      !contact.name.trim() ||
+      !contact.surname.trim() ||
+      !contact.number.trim()
+    ) {
+      alert("fill");
+      return;
+    }
     addContact(contact);
+    setContact({ name: "", surname: "", number: "" });
   }
 
   return (
@@ -29,18 +38,21 @@ const AddContacts = () => {
         onChange={(e) => handleInput(e)}
         type="text"
         placeholder="name"
+        value={contact.name}
       />
       <input
         name="surname"
         onChange={(e) => handleInput(e)}
         type="text"
         placeholder="surname"
+        value={contact.surname}
       />
       <input
         name="number"
         onChange={(e) => handleInput(e)}
         type="text"
         placeholder="number"
+        value={contact.number}
       />
       <button onClick={handleClick}>add</button>
     </div>

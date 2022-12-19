@@ -1,12 +1,12 @@
 import React, { useContext, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { contactContext } from "../context/ContactsContext";
 import EditContacts from "./EditContacts";
 
 const ContactList = () => {
-  const { getContacts, contacts, deleteContact } = useContext(contactContext);
+  const { getContacts, contacts, deleteContact, editContact } =
+    useContext(contactContext);
 
-  const navigate = useNavigate();
   useEffect(() => {
     getContacts();
   }, []);
@@ -36,18 +36,20 @@ const ContactList = () => {
           <hr />
           <h4>Number: {contact.number}</h4>
           <hr />
-          <button
-            onClick={() => navigate(`/edit/${contact.id}`)}
-            style={{
-              color: "white",
-              backgroundColor: "blue",
-              borderRadius: "5px",
-              marginRight: "5px",
-              border: "1px blue",
-            }}
-          >
-            edit
-          </button>
+          <Link to={`/edit/${contact.id}`}>
+            <button
+              style={{
+                color: "white",
+                backgroundColor: "blue",
+                borderRadius: "5px",
+                marginRight: "5px",
+                border: "1px blue",
+              }}
+            >
+              edit
+            </button>
+          </Link>
+
           <button
             style={{
               color: "white",

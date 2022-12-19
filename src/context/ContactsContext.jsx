@@ -1,12 +1,13 @@
 import axios from "axios";
 import React, { createContext, useContext, useEffect, useReducer } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 export const contactContext = createContext();
 const API = "http://localhost:8000/contacts";
 
 const INIT_STATE = {
   contacts: [],
+  contactToEdit: null,
 };
 
 function reducer(state = INIT_STATE, action) {
@@ -16,6 +17,11 @@ function reducer(state = INIT_STATE, action) {
         ...state,
         contacts: action.payload,
       };
+    case "getContact":
+      return {
+        ...state,
+        contactToEdit: action.payload,
+      };
     default:
       return state;
   }
@@ -24,7 +30,7 @@ function reducer(state = INIT_STATE, action) {
 const ContactsContext = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, INIT_STATE);
   const params = useParams();
-
+  const navigate = useNavigate();
   async function addContact(newContact) {
     await axios.post(API, newContact);
     getContacts();
@@ -42,19 +48,32 @@ const ContactsContext = ({ children }) => {
     getContacts();
   }
 
-  async function editContact(newObj, id) {
-    await axios.patch(`${API}/${id}`, newObj);
-    getContacts(id);
+  async function editContact(id, newObj) {
+    let { data } = await axios.patch(`${API}/${id}`, newObj);
+
+    getContacts();
+    navigate("/");
   }
+  async function getContactDetails(id) {
+    let { data } = await axios(`${API}/${id}`);
+    dispatch({
+      type: "getContact",
+      payload: data,
+    });
+  }
+
   useEffect(() => {
     getContacts(params.id);
   }, []);
 
   const cloud = {
+    contacts: state.contacts,
+    contactToEdit: state.contactToEdit,
     addContact,
     getContacts,
-    contacts: state.contacts,
     deleteContact,
+    editContact,
+    getContactDetails,
   };
 
   return (
